@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from '../modules/auth/auth.module';
-import { WeatherModule } from '../modules/weather/weather.module';
+import { AuthModule, WeatherModule } from '../modules';
+import { TypeormAdapterModule } from '../shared';
 
 @Module({
-  imports: [AuthModule, WeatherModule],
+  imports: [AuthModule, WeatherModule, TypeormAdapterModule],
 })
 export class EntrypointModule {}
