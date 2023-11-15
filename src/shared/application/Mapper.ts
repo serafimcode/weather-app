@@ -1,6 +1,4 @@
-export interface Mapper<Domain, ReqDTO, ResDTO, Entity> {
+export interface Mapper<Domain, Entity> {
   toDomain(e: Entity): Domain;
-  toResponseDTO(d: Domain): ResDTO;
-  toRequestDTO(d: Domain): ReqDTO;
   toPersistence(d: Domain): Entity;
 }

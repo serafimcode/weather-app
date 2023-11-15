@@ -1,12 +1,11 @@
 import { Entity, UniqueEntityID } from '../../../shared';
 import { Fio } from './Fio';
-import { ApiToken } from './ApiToken';
 import { Login } from './Login';
 import { Password } from './Password';
 
 export interface IUserProps {
   fio: Fio;
-  apiToken: ApiToken;
+  apiToken: string;
   login: Login;
   password: Password;
 }
@@ -16,7 +15,7 @@ export class User extends Entity<IUserProps> {
     return this.props.fio;
   }
 
-  get apiToken(): ApiToken {
+  get apiToken(): string {
     return this.props.apiToken;
   }
 

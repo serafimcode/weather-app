@@ -1,14 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { SignUpRequestDTO, SignUpResponseDTO } from '../dto';
-import { ApiToken, Fio, Login, Password, User } from '../../domain';
-import { UniqueEntityID } from '../../../../shared';
+import {
+  SignInRequestDto,
+  SignInResponseDto,
+  SignUpRequestDTO,
+  SignUpResponseDTO,
+} from '../dto';
+import { Fio, Login, Password, User } from '../../domain';
+
 import { IUserRepository, USER_REPOSITORY_INJECTOR } from '../repository';
 import {
   IPasswordHashService,
   PASSWORD_HASH_INJECTOR,
 } from '../../infrastructure';
-import { ITokenService, TOKEN_INJECTOR } from './token.service';
+import { UniqueEntityID } from '../../../../shared';
+import { WeatherService } from '../../../weather/application';
+import { UserMapService } from '../mapper';
 
+/**TODO split by useCases*/
 @Injectable()
 export class AuthService {
   constructor(
@@ -16,8 +24,8 @@ export class AuthService {
     private userRepo: IUserRepository,
     @Inject(PASSWORD_HASH_INJECTOR)
     private hashService: IPasswordHashService,
-    @Inject(TOKEN_INJECTOR)
-    private tokenService: ITokenService,
+    private weatherService: WeatherService,
+    private userMap: UserMapService,
   ) {}
 
   async signUp(dto: SignUpRequestDTO): Promise<SignUpResponseDTO> {
@@ -31,7 +39,9 @@ export class AuthService {
         );
 
         const password = Password.create(hashedPassword);
-        const apiToken = ApiToken.create(this.tokenService.generateApiToken());
+
+        /**TODO: replace direct communication with DomainEvents*/
+        const apiToken = this.weatherService.getApiToken();
 
         const user = User.create(
           { login, password, fio, apiToken },
@@ -40,11 +50,26 @@ export class AuthService {
 
         await this.userRepo.save(user);
 
-        return Promise.resolve({
-          fio: user.fio.value,
-          apiToken: user.apiToken.value,
-        });
+        return this.userMap.toSignUpResponseDTO(user);
       }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async signIn(dto: SignInRequestDto): Promise<SignInResponseDto> {
+    try {
+      const login = Login.create(dto.login);
+      const user = await this.userRepo.getByLogin(login);
+
+      const isPasswordCorrect = await this.hashService.comparePassword(
+        dto.password,
+        user.password.value,
+      );
+
+      if (isPasswordCorrect) {
+        return this.userMap.toSignInResponseDTO(user);
+      } else throw new Error('Wrong password');
     } catch (e) {
       throw e;
     }

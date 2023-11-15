@@ -1,17 +1,15 @@
 import { Mapper, UniqueEntityID } from '../../../../shared';
-import { ApiToken, Fio, Login, Password, User } from '../../domain';
-import { SignUpRequestDTO, SignUpResponseDTO } from '../dto';
+import { Fio, Login, Password, User } from '../../domain';
+import { SignInResponseDto, SignUpResponseDTO } from '../dto';
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../../infrastructure';
 
 @Injectable()
-export class UserMapService
-  implements Mapper<User, SignUpRequestDTO, SignUpResponseDTO, UserEntity>
-{
+export class UserMapService implements Mapper<User, UserEntity> {
   toDomain(e: UserEntity): User {
     try {
       const fio = Fio.create(e.fio);
-      const apiToken = ApiToken.create(e.apiToken);
+      const apiToken = e.apiToken;
       const password = Password.create(e.password);
       const login = Login.create(e.login);
 
@@ -35,22 +33,21 @@ export class UserMapService
       fio: d.fio.value,
       login: d.login.value,
       password: d.password.value,
-      apiToken: d.apiToken.value,
+      apiToken: d.apiToken,
     };
   }
 
-  toRequestDTO(d: User): SignUpRequestDTO {
+  toSignUpResponseDTO(d: User): SignUpResponseDTO {
     return {
-      login: d.login.value,
-      password: d.password.value,
       fio: d.fio.value,
+      apiToken: d.apiToken,
     };
   }
 
-  toResponseDTO(d: User): SignUpResponseDTO {
+  toSignInResponseDTO(d: User): SignInResponseDto {
     return {
       fio: d.fio.value,
-      apiToken: d.apiToken.value,
+      apiToken: d.apiToken,
     };
   }
 }

@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import {
   AuthController,
   AuthService,
-  TOKEN_INJECTOR,
-  TokenService,
   USER_REPOSITORY_INJECTOR,
   UserMapService,
   UserRepositoryService,
@@ -14,9 +12,10 @@ import {
   UserEntity,
 } from './infrastructure';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { WeatherModule } from '../weather';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity]), WeatherModule],
   controllers: [AuthController],
   providers: [
     AuthService,
@@ -27,10 +26,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     {
       provide: PASSWORD_HASH_INJECTOR,
       useClass: PasswordHashService,
-    },
-    {
-      provide: TOKEN_INJECTOR,
-      useClass: TokenService,
     },
     UserMapService,
   ],
