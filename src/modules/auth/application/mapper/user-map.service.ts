@@ -12,6 +12,7 @@ export class UserMapService implements Mapper<User, UserEntity> {
       const apiToken = e.apiToken;
       const password = Password.create(e.password);
       const login = Login.create(e.login);
+      const sessionId = e.sessionId;
 
       return User.create(
         {
@@ -19,6 +20,7 @@ export class UserMapService implements Mapper<User, UserEntity> {
           apiToken,
           password,
           login,
+          sessionId,
         },
         new UniqueEntityID(),
       );
@@ -34,6 +36,7 @@ export class UserMapService implements Mapper<User, UserEntity> {
       login: d.login.value,
       password: d.password.value,
       apiToken: d.apiToken,
+      sessionId: d.sessionId,
     };
   }
 

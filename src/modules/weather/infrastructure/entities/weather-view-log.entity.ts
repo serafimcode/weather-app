@@ -6,7 +6,7 @@ export class WeatherViewLogEntity {
   @PrimaryColumn({ type: 'uuid' })
   id: string;
 
-  @ManyToOne((type) => UserEntity)
+  @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 

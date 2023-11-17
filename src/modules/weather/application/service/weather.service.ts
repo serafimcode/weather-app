@@ -16,6 +16,10 @@ export class WeatherService {
   async getCurrentWeather(
     dto: GetWeatherRequestDto,
   ): Promise<GetWeatherResponseDto> {
+    const isTokenValid = this.weatherApiService.isTokenValid(dto.apiToken);
+    if (!isTokenValid) {
+      throw new Error('Invalid api token');
+    }
     return await this.weatherApiService.getWeather(dto);
   }
 }

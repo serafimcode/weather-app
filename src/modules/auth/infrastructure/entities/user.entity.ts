@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { WeatherViewLogEntity } from '../../../weather/infrastructure';
+import { SessionEntity } from './session.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -14,6 +16,11 @@ export class UserEntity {
   @Column()
   password: string;
 
+  @OneToMany(() => WeatherViewLogEntity, (weatherLog) => weatherLog.id)
   @Column({ name: 'api_token' })
-  apiToken: string;
+  apiToken: WeatherViewLogEntity[];
+
+  @OneToMany(() => SessionEntity, (session) => session.id)
+  @Column({ name: 'session_id', nullable: true })
+  sessionId: SessionEntity[];
 }

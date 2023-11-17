@@ -1,4 +1,4 @@
-import { ValueObject } from '../../../shared';
+import { ValueObject } from '../../../../shared';
 
 export interface ILoginProps {
   value: string;
@@ -24,15 +24,15 @@ export class Login extends ValueObject<ILoginProps> {
     return password.length >= this.MIN_LENGTH;
   }
 
-  static create(pass: string): Login {
-    if (!this.isAppropriateLength(pass)) {
+  static create(login: string): Login {
+    if (!this.isAppropriateLength(login)) {
       throw new Error('The login should have at least 6 symbols');
     }
-    if (!this.isValid(pass)) {
+    if (!this.isValid(login)) {
       throw new Error(
         'Invalid login. Password have to contain only latin characters, numbers and underscore(_)',
       );
     }
-    return new Login({ value: pass });
+    return new Login({ value: login });
   }
 }

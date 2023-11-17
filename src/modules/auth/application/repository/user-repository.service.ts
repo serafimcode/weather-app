@@ -1,19 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Login, User } from '../../domain';
+import { IUserRepository, Login, User } from '../../domain';
 import { Repository } from 'typeorm';
 import { UserMapService } from '../mapper';
 import { UserEntity } from '../../infrastructure';
 
 export const USER_REPOSITORY_INJECTOR = 'USER_REPOSITORY_INJECTOR';
-
-export interface IUserRepository {
-  getByLogin(login: Login): Promise<User>;
-
-  exists(login: Login): Promise<boolean>;
-
-  save(user: User): Promise<void>;
-}
 
 @Injectable()
 export class UserRepositoryService implements IUserRepository {
@@ -27,7 +19,7 @@ export class UserRepositoryService implements IUserRepository {
     return await this.userEntity.exist({ where: { login: login.value } });
   }
 
-  async save(user: User): Promise<void> {
+  async create(user: User): Promise<void> {
     const exists = await this.exists(user.login);
 
     if (!exists) {
